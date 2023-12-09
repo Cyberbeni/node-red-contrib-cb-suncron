@@ -44,9 +44,9 @@ export = (RED: NodeRED.NodeAPI): void => {
 					if (event.cronTime.isBefore(Date.now())) {
 						continue
 					}
-					const cron = new CronJob({
-						cronTime: event.cronTime.toDate(),
-						onTick: () => {
+					const cron = new CronJob(
+						event.cronTime.toDate(),
+						() => {
 							ejectMsg(event)
 							setNodeStatus(
 								'Sending message',
@@ -55,8 +55,8 @@ export = (RED: NodeRED.NodeAPI): void => {
 							setTimeout(() => {
 								setNodeStatusToNextEvent(schedule)
 							}, 2000)
-						},
-					})
+						}
+					)
 	
 					try {
 						cron.start()
