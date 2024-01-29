@@ -18,17 +18,24 @@ export = (RED: NodeRED.NodeAPI): void => {
 				retVal.fill(null)
 				const sunTimes = location.credentials.sunTimes.value
 				const now = dayjs(Date.now())
-				const getTime = function (dataPoint: SuncronDataPoint): dayjs.Dayjs | null {
+				const getTime = function (dataPoint: SuncronDataPoint, isFirst: Boolean): dayjs.Dayjs | null {
 					if (dataPoint.event == 'midnight') {
 						if (dataPoint.offset < 0) {
 							return null
+						}
+						let day = 0
+						if (
+							!isFirst &&
+							(dataPoint.offset % (60 * 24)) == 0
+						) {
+							day = 1
 						}
 						return now
 							.set('h', (dataPoint.offset / 60) % 24)
 							.set('m', dataPoint.offset % 60)
 							.set('s', 0)
 							.set('ms', 0)
-							.add(dataPoint.offset / 60 / 24, 'day')
+							.add(day, 'day')
 					}
 					const eventType = dataPoint.event
 					const sunEventTime = dayjs(sunTimes[eventType])
@@ -39,9 +46,9 @@ export = (RED: NodeRED.NodeAPI): void => {
 					}
 				}
 				for (let i = 0; i < config.outputs; i++) {
-					const first = getTime(config.dataPoints[i])
+					const first = getTime(config.dataPoints[i], true)
 					if (first == null) { continue }
-					const second = getTime(config.dataPoints[i + 1])
+					const second = getTime(config.dataPoints[i + 1], false)
 					if (second == null) { continue }
 					if (first.isBefore(second)) {
 						if (first.isBefore(now) && now.isBefore(second)) {
