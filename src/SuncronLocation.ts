@@ -26,12 +26,12 @@ export = (RED: NodeRED.NodeAPI): void => {
 				sunTimes: new BehaviorSubject<SunCalc.GetTimesResult>(getTimes())
 			}
 
-			const dailyCron = new CronJob({
-				cronTime: '1 0 0 * * *',
-				onTick: () => {
+			const dailyCron = new CronJob(
+				'1 0 0 * * *',
+				() => {
 					node.credentials.sunTimes.next(getTimes())
-				},
-			})
+				}
+			)
 			
 			dailyCron.start()
 
