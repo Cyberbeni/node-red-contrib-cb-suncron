@@ -3,5 +3,5 @@ name: "PR checks"
 on: pull_request
 
 jobs:
-  npm-lint-and-test:
-    uses: Cyberbeni/workflows/.github/workflows/npm-lint-and-test.yml@master
+  npm-pr-checks:
+    uses: Cyberbeni/workflows/.github/workflows/npm-pr-checks.yml@master
